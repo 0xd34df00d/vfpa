@@ -207,9 +207,21 @@ Cong₂+ a (tc-trans b₁ b₂) = tc-trans (Cong₂+ a b₁) (Cong₂+ a b₂)
 
 -- Exercises
 --
--- 9.1
+module exercises where
 
-term1 = λ* "x" (λ* "y" (var "x"))
-term2 = λ* "x" (λ* "y" (var "y"))
-term3 = λ* "s" (λ* "z" (var "s" ∘ var "z"))
-term4 = λ* "x" (var "x" ∘ var "x")
+  -- 9.1
+
+  term1 = λ* "x" (λ* "y" (var "x"))
+  term2 = λ* "x" (λ* "y" (var "y"))
+  term3 = λ* "s" (λ* "z" (var "s" ∘ var "z"))
+  term4 = λ* "x" (var "x" ∘ var "x")
+
+  -- 9.2
+
+  c = (K ∘ K) ∘ ((K ∘ K) ∘ K)
+
+  red1 : c ⇝ K
+  red1 = ⇝K K S 
+
+  red2 : c ⇝ (K ∘ K) ∘ K
+  red2 = ⇝K (K ∘ K ∘ K) S
