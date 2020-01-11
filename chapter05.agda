@@ -35,3 +35,17 @@ diagonal-matrix d = go
 
 identity-matrix : (n : ℕ) → n by n matrix
 identity-matrix = diagonal-matrix 1
+
+transpose : {m n : ℕ} → n by m matrix -> m by n matrix
+transpose {m} [] = repeat𝕍 [] m
+transpose (row :: mat) = zipWith𝕍 _::_ row (transpose mat)
+
+_∙_ : {n : ℕ} → 𝕍 ℕ n → 𝕍 ℕ n → ℕ
+[] ∙ [] = 0
+(x₁ :: v₁) ∙ (x₂ :: v₂) = x₁ * x₂ + v₁ ∙ v₂
+
+_*matrix_ : {n k m : ℕ} → n by k matrix → k by m matrix → n by m matrix
+[] *matrix m2 = []
+(row :: m1) *matrix m2 = let rec = m1 *matrix m2
+                             row' = map𝕍 (_∙_ row) (transpose m2)
+                         in row' :: rec
