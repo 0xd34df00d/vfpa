@@ -34,8 +34,8 @@ length-filter' : ∀ {ℓ} {A : Set ℓ}
                → length (filter p l) ≤ length l ≡ tt
 length-filter' p [] = refl
 length-filter' p (x :: l) with p x
-length-filter' p (x :: l) | tt = length-filter' p l
-length-filter' p (x :: l) | ff = ≤-trans {length (filter p l)} (length-filter' p l) (≤-suc (length l))
+... | tt = length-filter' p l
+... | ff = ≤-trans {length (filter p l)} (length-filter' p l) (≤-suc (length l))
 
 filter-idem' : ∀ {ℓ} {A : Set ℓ}
              → (p : A → 𝔹)
@@ -43,8 +43,8 @@ filter-idem' : ∀ {ℓ} {A : Set ℓ}
              → filter p (filter p l) ≡ filter p l
 filter-idem' p [] = refl
 filter-idem' p (x :: l) with keep (p x)
-filter-idem' p (x :: l) | tt , p' rewrite p' | p' | filter-idem' p l = refl
-filter-idem' p (x :: l) | ff , p' rewrite p' = filter-idem' p l
+... | tt , p' rewrite p' | p' | filter-idem' p l = refl
+... | ff , p' rewrite p' = filter-idem' p l
 
 -- 4.1
 -- a, b, d are obviously false
@@ -62,8 +62,8 @@ filter-cons : ∀ {ℓ} {A : Set ℓ}
             → filter p (l₁ ++ l₂) ≡ filter p l₁ ++ filter p l₂
 filter-cons p [] l₂ = refl
 filter-cons p (x :: l₁) l₂ with p x
-filter-cons p (x :: l₁) l₂ | tt rewrite sym (filter-cons p l₁ l₂) = refl
-filter-cons p (x :: l₁) l₂ | ff = filter-cons p l₁ l₂
+... | tt rewrite sym (filter-cons p l₁ l₂) = refl
+... | ff = filter-cons p l₁ l₂
 
 -- 4.3
 takeWhile : ∀ {ℓ} {A : Set ℓ}
