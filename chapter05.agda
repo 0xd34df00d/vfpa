@@ -54,18 +54,7 @@ _*matrix_ : {n k m : ℕ} → n by k matrix → k by m matrix → n by m matrix
 
 -- 5.3
 
-,inj₁ : {A : Set} {B : A → Set} {a a' : A} {b : B a} {b' : B a'}
-      → (a , b) ≡ (a' , b') → a ≡ a'
-,inj₁ refl = refl
-
-,inj₂ : {A : Set} {a : A} {B : Set} {b b' : B}
-      → (a , b) ≡ (a , b') → b ≡ b'
-,inj₂ refl = refl
-
-𝕍-to-𝕃-to-𝕍 : ∀ {n} {A} → (xs : 𝕍 A n) → 𝕃-to-𝕍 (𝕍-to-𝕃 xs) ≡ (n , xs)
+𝕍-to-𝕃-to-𝕍 : ∀ {n} {A : Set} → (xs : 𝕍 A n) → 𝕃-to-𝕍 (𝕍-to-𝕃 xs) ≡ (n , xs)
 𝕍-to-𝕃-to-𝕍 [] = refl
-𝕍-to-𝕃-to-𝕍 {_} {A} (_ :: xs) with keep (𝕃-to-𝕍 (𝕍-to-𝕃 xs))
-... | ((k , xs') , o) rewrite o with trans (sym (𝕍-to-𝕃-to-𝕍 xs)) o
-... | p with ,inj₁ p
-... | p₁ rewrite p₁ with ,inj₂ {ℕ} {k} {𝕍 A k} {xs} {xs'} {! p !} 
-... | p₂ rewrite p₂ = refl
+𝕍-to-𝕃-to-𝕍 (x :: xs) with 𝕃-to-𝕍 (𝕍-to-𝕃 xs) | 𝕍-to-𝕃-to-𝕍 xs
+... | a , .xs | refl = refl
