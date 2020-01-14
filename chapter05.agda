@@ -5,7 +5,6 @@ open import nat
 open import bool
 open import eq
 open import product
-open import product-thms using (keep)
 
 -- 5.1
 
@@ -58,3 +57,18 @@ _*matrix_ : {n k m : ℕ} → n by k matrix → k by m matrix → n by m matrix
 𝕍-to-𝕃-to-𝕍 [] = refl
 𝕍-to-𝕃-to-𝕍 (x :: xs) with 𝕃-to-𝕍 (𝕍-to-𝕃 xs) | 𝕍-to-𝕃-to-𝕍 xs
 ... | a , .xs | refl = refl
+
+-- 5.4
+
+unzip𝕍 : ∀ {ℓ₁} {ℓ₂} {A : Set ℓ₁} {B : Set ℓ₂} {n}
+       → 𝕍 (A × B) n
+       → 𝕍 A n × 𝕍 B n
+unzip𝕍 [] = [] , []
+unzip𝕍 ((a , b) :: xs) with unzip𝕍 xs
+... | as₁ , bs₁ = a :: as₁ , b :: bs₁
+
+-- 5.5
+-- I'm lazy
+
+-- 5.6
+-- See chapter05_56.agda
