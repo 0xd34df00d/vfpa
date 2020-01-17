@@ -45,3 +45,11 @@ mkℤ (suc m) ms -ℤ mkℤ (suc s) ss with ms xor ss
 +ℤneg (mkℤ (suc n) ff) (mkℤ zero triv) = refl
 +ℤneg (mkℤ (suc n) ff) (mkℤ (suc n₁) tt) = refl
 +ℤneg (mkℤ (suc n) ff) (mkℤ (suc n₁) ff) = refl
+
+ℤ+ℤ-ℤ : ∀ z₁ z₂ z₃ → (z₁ +ℤ z₂) -ℤ z₃ ≡ z₁ +ℤ (z₂ -ℤ z₃)
+ℤ+ℤ-ℤ (mkℤ zero x) z₂ z₃ = refl
+ℤ+ℤ-ℤ (mkℤ (suc n) x) (mkℤ zero triv) (mkℤ n₁ x₂) rewrite 0-ℤ (mkℤ n₁ x₂) = sym (+ℤneg (mkℤ (suc n) x) (mkℤ n₁ x₂))
+ℤ+ℤ-ℤ (mkℤ (suc n) x) (mkℤ (suc n₁) x₁) (mkℤ zero triv) = refl
+ℤ+ℤ-ℤ (mkℤ (suc n) x) (mkℤ (suc n₁) tt) (mkℤ (suc n₂) tt) = {!   !}
+ℤ+ℤ-ℤ (mkℤ (suc n) x) (mkℤ (suc n₁) ff) (mkℤ (suc n₂) tt) = {!   !}
+ℤ+ℤ-ℤ (mkℤ (suc n) x) (mkℤ (suc n₁) x₁) (mkℤ (suc n₂) ff) = {!   !}
