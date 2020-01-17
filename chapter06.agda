@@ -33,3 +33,15 @@ mkℤ (suc m) ms -ℤ mkℤ (suc s) ss with ms xor ss
 0-ℤ : ∀ z → 0ℤ -ℤ z ≡ ℤneg z
 0-ℤ (mkℤ zero triv) = refl
 0-ℤ (mkℤ (suc n) x) = refl
+
++ℤneg : ∀ z₁ z₂ → z₁ +ℤ (ℤneg z₂) ≡ z₁ -ℤ z₂
++ℤneg (mkℤ zero triv) z₂ rewrite 0-ℤ z₂ = refl
++ℤneg (mkℤ (suc n) tt) (mkℤ zero x) = refl
++ℤneg (mkℤ (suc n) tt) (mkℤ (suc n₁) tt) with ℕ-trichotomy n n₁
+... | inj₁ p = refl
+... | inj₂ (inj₁ x) = refl
+... | inj₂ (inj₂ y) = refl
++ℤneg (mkℤ (suc n) tt) (mkℤ (suc n₁) ff) = refl
++ℤneg (mkℤ (suc n) ff) (mkℤ zero triv) = refl
++ℤneg (mkℤ (suc n) ff) (mkℤ (suc n₁) tt) = refl
++ℤneg (mkℤ (suc n) ff) (mkℤ (suc n₁) ff) = refl
