@@ -111,3 +111,26 @@ Sfree-⇝-size> prf (⇝Cong2 a r) with &&-elim{Sfree a} prf
 ⇝-preserves-Sfree prf (⇝Cong2 a r) with &&-elim {Sfree a} prf
 ... | prf_a , prf_b = let rec = ⇝-preserves-Sfree prf_b r
                       in &&-intro prf_a rec
+
+Sfree-comb : Set
+Sfree-comb = Σ comb (λ a → Sfree a ≡ tt)
+
+_⇝̇_ : Sfree-comb → Sfree-comb → Set
+(a , _) ⇝̇ (b , _) = a ⇝ b
+
+size-Sfree-comb : Sfree-comb → ℕ
+size-Sfree-comb (a , _) = size a
+
+decrease-size : ∀ {a a' : Sfree-comb}
+              → a ⇝̇ a'
+              → size-Sfree-comb a > size-Sfree-comb a' ≡ tt
+decrease-size {a , p} {a' , p'} prf = Sfree-⇝-size> p prf
+
+open meas {A = Sfree-comb}
+          _⇝̇_
+          (λ a b → a > b ≡ tt)
+          size-Sfree-comb
+          decrease-size
+
+measure-decreases : ∀ a → ↓ _⇝̇_ a
+measure-decreases a = measure-↓' (↓->' (size-Sfree-comb a))
