@@ -7,6 +7,7 @@ open import sum
 open import eq
 open import bool
 open import bool-thms
+open import bool-thms2
 open import product
 open import product-thms
 
@@ -79,3 +80,34 @@ size : comb → ℕ
 size S = 1
 size K = 1
 size (a ∘ b) = suc (size a + size b)
+
+-- S-free combinators
+
+Sfree : comb → 𝔹
+Sfree S = ff
+Sfree K = tt
+Sfree (a ∘ b) = Sfree a && Sfree b
+
+Sfree-⇝-size> : ∀ {a a' : comb}
+              → Sfree a ≡ tt
+              → a ⇝ a'
+              → size a > size a' ≡ tt
+Sfree-⇝-size> prf (⇝K a b) = ≤<-trans {size a}
+                                (≤+1 (size a) (size b))
+                                (<+2 {size a + size b} {2})
+Sfree-⇝-size> prf (⇝Cong1 {a} {a'} b r) with &&-elim {Sfree a} prf
+... | prf' , _ = <+mono2 {size a'} (Sfree-⇝-size> prf' r)
+Sfree-⇝-size> prf (⇝Cong2 a r) with &&-elim{Sfree a} prf
+... | _ , prf' = <+mono1 {size a} (Sfree-⇝-size> prf' r)
+
+⇝-preserves-Sfree : ∀ {a a' : comb}
+                  → Sfree a ≡ tt
+                  → a ⇝ a'
+                  → Sfree a' ≡ tt
+⇝-preserves-Sfree prf (⇝K a b) = fst (&&-elim {Sfree a} prf)
+⇝-preserves-Sfree prf (⇝Cong1 {a} {a'} b r) with &&-elim {Sfree a} prf
+... | prf_a , prf_b = let rec = ⇝-preserves-Sfree prf_a r
+                      in &&-intro rec prf_b
+⇝-preserves-Sfree prf (⇝Cong2 a r) with &&-elim {Sfree a} prf
+... | prf_a , prf_b = let rec = ⇝-preserves-Sfree prf_b r
+                      in &&-intro prf_a rec
