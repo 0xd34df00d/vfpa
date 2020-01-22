@@ -10,6 +10,7 @@ open import bool-thms
 open import bool-thms2
 open import product
 open import product-thms
+open import string
 
 ↓->' : ∀ x → ↓𝔹 _>_ x
 ↓->' x₀ = pf↓ (h x₀)
@@ -134,3 +135,32 @@ open meas {A = Sfree-comb}
 
 measure-decreases : ∀ a → ↓ _⇝̇_ a
 measure-decreases a = measure-↓' (↓->' (size-Sfree-comb a))
+
+
+-- λ-abtractions with combinators
+
+data varcomb : Set where
+  S : varcomb
+  K : varcomb
+  _∘_ : (a : varcomb) → (b : varcomb) → varcomb
+  var : (s : string) → varcomb
+
+λ* : (s : string) → varcomb → varcomb
+λ* s S = K ∘ S
+λ* s K = K ∘ K
+λ* s (a ∘ b) = S ∘ λ* s a ∘ λ* s b
+λ* s (var s') = if s =string s' then S ∘ K ∘ K else var s'
+
+contains-var : string → varcomb → 𝔹
+contains-var _ S = ff
+contains-var _ K = ff
+contains-var s (a ∘ b) = contains-var s a || contains-var s b
+contains-var s (var s') = s =string s'
+
+λ*-binds : ∀ s v → contains-var s (λ* s v) ≡ ff
+λ*-binds s S = refl
+λ*-binds s K = refl
+λ*-binds s (a ∘ b) rewrite λ*-binds s a | λ*-binds s b = refl
+λ*-binds s (var s') with keep (s =string s')
+... | tt , prf rewrite prf = refl
+... | ff , prf rewrite prf = prf
