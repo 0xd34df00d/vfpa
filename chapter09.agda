@@ -58,3 +58,24 @@ div-helper (suc x) (pf↓ fx) (suc d) _ with keep (x < d)
                                 | +comm c b
                                 | +assoc a b c
                                 | prf = refl
+
+
+
+infixl 7 _∘_
+infix 6 _⇝_
+
+data comb : Set where
+  S : comb
+  K : comb
+  _∘_ : comb → comb → comb
+
+data _⇝_ : comb → comb → Set where
+  ⇝K : (a b : comb) → K ∘ a ∘ b ⇝ a
+  ⇝S : (a b c : comb) → S ∘ a ∘ b ∘ c ⇝ (a ∘ c) ∘ (b ∘ c)
+  ⇝Cong1 : {a a' : comb} → (b : comb) → a ⇝ a' → a ∘ b ⇝ a' ∘ b
+  ⇝Cong2 : (a : comb) → {b b' : comb} → b ⇝ b' → a ∘ b ⇝ a ∘ b'
+
+size : comb → ℕ
+size S = 1
+size K = 1
+size (a ∘ b) = suc (size a + size b)
