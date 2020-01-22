@@ -149,7 +149,7 @@ data varcomb : Set where
 λ* s S = K ∘ S
 λ* s K = K ∘ K
 λ* s (a ∘ b) = S ∘ λ* s a ∘ λ* s b
-λ* s (var s') = if s =string s' then S ∘ K ∘ K else var s'
+λ* s (var s') = if s =string s' then S ∘ K ∘ K else K ∘ var s'
 
 contains-var : string → varcomb → 𝔹
 contains-var _ S = ff
