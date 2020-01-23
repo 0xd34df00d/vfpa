@@ -164,3 +164,43 @@ contains-var s (var s') = s =string s'
 λ*-binds s (var s') with keep (s =string s')
 ... | tt , prf rewrite prf = refl
 ... | ff , prf rewrite prf = prf
+
+subst : varcomb → string → varcomb → varcomb
+subst c s S = S
+subst c s K = K
+subst c s (c₁ ∘ c₂) = subst c s c₁ ∘ subst c s c₂
+subst c s (var s₁) = if s =string s₁ then c else var s₁
+
+infix 6 _⇒_
+data _⇒_ : varcomb → varcomb → Set where
+  ⇒K : ∀ (a b) → K ∘ a ∘ b ⇒ a
+  ⇒S : ∀ (a b c) → S ∘ a ∘ b ∘ c ⇒ (a ∘ c) ∘ (b ∘ c)
+  ⇒Cong₁ : ∀ {a a'} b → a ⇒ a' → a ∘ b ⇒ a' ∘ b
+  ⇒Cong₂ : ∀ a {b b'} → b ⇒ b' → a ∘ b ⇒ a ∘ b'
+
+open import closures
+open closures.basics _⇒_
+
+infix 6 _⇒+_
+_⇒+_ : varcomb → varcomb → Set
+_⇒+_ = tc
+
+Cong₁+ : ∀ {a a'} b → a ⇒+ a' → a ∘ b ⇒+ a' ∘ b
+Cong₁+ b (tc-step a) = tc-step (⇒Cong₁ b a)
+Cong₁+ b (tc-trans a₁ a₂) = tc-trans (Cong₁+ b a₁) (Cong₁+ b a₂)
+
+Cong₂+ : ∀ a {b b'} → b ⇒+ b' → a ∘ b ⇒+ a ∘ b'
+Cong₂+ a (tc-step b) = tc-step (⇒Cong₂ a b)
+Cong₂+ a (tc-trans b₁ b₂) = tc-trans (Cong₂+ a b₁) (Cong₂+ a b₂)
+
+λ*-⇒ : ∀ v₁ v₂ s
+     → λ* s v₁ ∘ v₂ ⇒+ subst v₂ s v₁
+λ*-⇒ S v₂ s = tc-step (⇒K S v₂)
+λ*-⇒ K v₂ s = tc-step (⇒K K v₂)
+λ*-⇒ (a ∘ b) v₂ s = let sDef = tc-step (⇒S (λ* s a) (λ* s b) v₂)
+                        ₁cng = Cong₁+ (λ* s b ∘ v₂) (λ*-⇒ a v₂ s)
+                        ₂cng = Cong₂+ (subst v₂ s a) (λ*-⇒ b v₂ s)
+                    in tc-trans sDef (tc-trans ₁cng ₂cng)
+λ*-⇒ (var s') v₂ s with s =string s'
+... | tt = tc-trans (tc-step (⇒S K K v₂)) (tc-step (⇒K v₂ (K ∘ v₂)))
+... | ff = tc-step (⇒K (var s') v₂)
