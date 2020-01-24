@@ -204,3 +204,12 @@ Cong₂+ a (tc-trans b₁ b₂) = tc-trans (Cong₂+ a b₁) (Cong₂+ a b₂)
 λ*-⇒ (var s') v₂ s with s =string s'
 ... | tt = tc-trans (tc-step (⇒S K K v₂)) (tc-step (⇒K v₂ (K ∘ v₂)))
 ... | ff = tc-step (⇒K (var s') v₂)
+
+-- Exercises
+--
+-- 9.1
+
+term1 = λ* "x" (λ* "y" (var "x"))
+term2 = λ* "x" (λ* "y" (var "y"))
+term3 = λ* "s" (λ* "z" (var "s" ∘ var "z"))
+term4 = λ* "x" (var "x" ∘ var "x")
