@@ -226,3 +226,16 @@ module exercises where
 
   red2 : c ⇝ (K ∘ K) ∘ K
   red2 = ⇝Cong2 (K ∘ K) (⇝K K K)
+
+  -- 9.3
+
+  open closures.basics _⇝_ renaming ( tc to tc⇝
+                                    ; tc-step to tc-step⇝
+                                    )
+
+  infix 6 _⇝+_
+  _⇝+_ : comb → comb → Set
+  _⇝+_ = tc⇝
+
+  mred : (K ∘ K) ∘ ((K ∘ K) ∘ K) ⇝+ K
+  mred = tc-step⇝ red1
