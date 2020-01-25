@@ -218,10 +218,11 @@ module exercises where
 
   -- 9.2
 
+  c : comb
   c = (K ∘ K) ∘ ((K ∘ K) ∘ K)
 
   red1 : c ⇝ K
-  red1 = ⇝K K S 
+  red1 = ⇝K K (K ∘ K ∘ K)
 
   red2 : c ⇝ (K ∘ K) ∘ K
-  red2 = ⇝K (K ∘ K ∘ K) S
+  red2 = ⇝Cong2 (K ∘ K) (⇝K K K)
