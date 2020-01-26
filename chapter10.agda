@@ -62,7 +62,7 @@ open struct
 _,_⊨_ : (k : struct) → W k → formula → Set
 k , w ⊨ $ x = V k w x
 k , w ⊨ True = ⊤
-k , w ⊨ (f₁ ⇒ f₂) = ∀ {w'} → R k w w' → k , w ⊨ f₁ → k , w ⊨ f₂
+k , w ⊨ (f₁ ⇒ f₂) = ∀ {w'} → R k w w' → k , w' ⊨ f₁ → k , w' ⊨ f₂
 k , w ⊨ (f₁ & f₂) = (k , w ⊨ f₁) ∧ (k , w ⊨ f₂)
 
 _,_⊨ctxt_ : (k : struct) → W k → ctxt → Set
