@@ -46,7 +46,7 @@ data _⊢_ : ctxt → formula → Set where
 exTerm1 : [] ⊢ p ⇒ p & p
 exTerm1 = ImpliesI (AndI assume assume)
 
-record struct : Set1 where
+record struct : Set₁ where
   field W         : Set
         R         : W → W → Set
         preorderR : preorder R
@@ -78,3 +78,16 @@ mono⊨ {k} {f₁ & f₂} r (p₁ , p₂) = mono⊨ {f = f₁} r p₁ , mono⊨ 
 mono⊨ctxt : ∀ {k Γ w₁ w₂} → R k w₁ w₂ → k , w₁ ⊨ctxt Γ → k , w₂ ⊨ctxt Γ
 mono⊨ctxt {Γ = []} r p = triv
 mono⊨ctxt {Γ = f :: Γ} r (p₁ , p₂) = mono⊨ {f = f} r p₁ , mono⊨ctxt r p₂
+
+_⊩_ : ctxt → formula → Set₁
+Γ ⊩ f = ∀ {k} {w : W k} → k , w ⊨ctxt Γ → k , w ⊨ f
+
+Soundness : ∀ {Γ f} → Γ ⊢ f → Γ ⊩ f
+Soundness assume ctx = fst ctx
+Soundness (weaken deriv) ctx = Soundness deriv (snd ctx)
+Soundness TrueI _ = triv
+Soundness (ImpliesI deriv) ctx rel f₁ent = Soundness deriv (f₁ent , mono⊨ctxt rel ctx)
+Soundness (ImpliesE d_f₁ d_impl) {k} ctx = Soundness d_f₁ ctx (reflR k) (Soundness d_impl ctx)
+Soundness (AndI deriv₁ deriv₂) ctx = Soundness deriv₁ ctx , Soundness deriv₂ ctx
+Soundness (AndE₁ deriv) ctx = fst (Soundness deriv ctx)
+Soundness (AndE₂ deriv) ctx = snd (Soundness deriv ctx)
