@@ -68,3 +68,13 @@ k , w ⊨ (f₁ & f₂) = (k , w ⊨ f₁) ∧ (k , w ⊨ f₂)
 _,_⊨ctxt_ : (k : struct) → W k → ctxt → Set
 k , w ⊨ctxt [] = ⊤
 k , w ⊨ctxt (f :: fs) = (k , w ⊨ f) ∧ (k , w ⊨ctxt fs)
+
+mono⊨ : ∀ {k f w₁ w₂} → R k w₁ w₂ → k , w₁ ⊨ f → k , w₂ ⊨ f
+mono⊨ {k} {$ x} r p = monoV k r p
+mono⊨ {k} {True} r p = triv
+mono⊨ {k} {f₁ ⇒ f₂} r p r' p' = p (transR k r r') p'
+mono⊨ {k} {f₁ & f₂} r (p₁ , p₂) = mono⊨ {f = f₁} r p₁ , mono⊨ {f = f₂} r p₂
+
+mono⊨ctxt : ∀ {k Γ w₁ w₂} → R k w₁ w₂ → k , w₁ ⊨ctxt Γ → k , w₂ ⊨ctxt Γ
+mono⊨ctxt {Γ = []} r p = triv
+mono⊨ctxt {Γ = f :: Γ} r (p₁ , p₂) = mono⊨ {f = f} r p₁ , mono⊨ctxt r p₂
