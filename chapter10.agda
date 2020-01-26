@@ -91,3 +91,35 @@ Soundness (ImpliesE d_f₁ d_impl) {k} ctx = Soundness d_f₁ ctx (reflR k) (Sou
 Soundness (AndI deriv₁ deriv₂) ctx = Soundness deriv₁ ctx , Soundness deriv₂ ctx
 Soundness (AndE₁ deriv) ctx = fst (Soundness deriv ctx)
 Soundness (AndE₂ deriv) ctx = snd (Soundness deriv ctx)
+
+data _≼_ : 𝕃 formula → 𝕃 formula → Set where
+  ≼-refl : ∀ {Γ} → Γ ≼ Γ
+  ≼-cons : ∀ {Γ Γ' f} → Γ ≼ Γ' → Γ ≼ (f :: Γ')
+
+≼-trans : ∀ {Γ₁ Γ₂ Γ₃} → Γ₁ ≼ Γ₂ → Γ₂ ≼ Γ₃ → Γ₁ ≼ Γ₃
+≼-trans r ≼-refl = r
+≼-trans r (≼-cons r') = ≼-cons (≼-trans r r')
+
+weaken≼ : ∀{Γ Γ' f} → Γ ≼ Γ' → Γ ⊢ f → Γ' ⊢ f
+weaken≼ ≼-refl prov = prov
+weaken≼ (≼-cons ext) prov = weaken (weaken≼ ext prov)
+
+U : struct
+U = record
+    { W = ctxt
+    ; R = _≼_
+    ; preorderR = ≼-refl , ≼-trans
+    ; V = λ Γ v → Γ ⊢ $ v
+    ; monoV = λ rel → weaken≼ rel
+    }
+
+CompletenessU : ∀ {f Γ} → U , Γ ⊨ f → Γ ⊢ f
+SoundnessU : ∀ {f Γ} → Γ ⊢ f → U , Γ ⊨ f
+CompletenessU {$ x} truthPrf = truthPrf
+CompletenessU {True} _ = TrueI
+CompletenessU {f₁ ⇒ f₂} truthPrf = ImpliesI (CompletenessU (truthPrf (≼-cons ≼-refl) (SoundnessU {f₁} assume)))
+CompletenessU {f₁ & f₂} (p₁ , p₂) = AndI (CompletenessU p₁) (CompletenessU p₂)
+SoundnessU {$ x} derivPrf = derivPrf
+SoundnessU {True} _ = triv
+SoundnessU {f₁ & f₂} derivPrf = SoundnessU (AndE₁ derivPrf) , SoundnessU (AndE₂ derivPrf)
+SoundnessU {f₁ ⇒ f₂} derivPrf rel f₁prf = SoundnessU (ImpliesE (weaken≼ rel derivPrf) (CompletenessU f₁prf))
