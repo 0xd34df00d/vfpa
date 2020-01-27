@@ -123,3 +123,16 @@ SoundnessU {$ x} derivPrf = derivPrf
 SoundnessU {True} _ = triv
 SoundnessU {f₁ & f₂} derivPrf = SoundnessU (AndE₁ derivPrf) , SoundnessU (AndE₂ derivPrf)
 SoundnessU {f₁ ⇒ f₂} derivPrf rel f₁prf = SoundnessU (ImpliesE (weaken≼ rel derivPrf) (CompletenessU f₁prf))
+
+ctxt-id : ∀ Γ → U , Γ ⊨ctxt Γ
+ctxt-id [] = triv
+ctxt-id (f :: Γ) = SoundnessU {f} assume , mono⊨ctxt (≼-cons ≼-refl) (ctxt-id Γ)
+
+Completeness : ∀ {f Γ} → Γ ⊩ f → Γ ⊢ f
+Completeness {Γ = Γ} p = CompletenessU (p (ctxt-id Γ))
+
+Universality₁ : ∀ {f Γ} → Γ ⊩ f → U , Γ ⊨ f
+Universality₁ {f} {Γ} prf = SoundnessU (Completeness {f} {Γ} prf)
+
+Universality₂ : ∀ {f Γ} → U , Γ ⊨ f → Γ ⊩ f
+Universality₂ {f} {Γ} prf = Soundness (CompletenessU {f} {Γ} prf)
