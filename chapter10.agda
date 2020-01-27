@@ -4,21 +4,22 @@ open import list
 open import nat
 open import product
 open import relations
-open import string
+open import nat
 open import unit
 
 infixr 6 _⇒_
 infixr 7 _&_
 
 data formula : Set where
-  $ : string → formula
+  $ : nat → formula
   True : formula
   _⇒_ : formula → formula → formula
   _&_ : formula → formula → formula
 
-p q : formula
-p = $ "p"
-q = $ "q"
+p q r : formula
+p = $ 0
+q = $ 1
+r = $ 2
 
 ctxt : Set
 ctxt = 𝕃 formula
@@ -50,7 +51,7 @@ record struct : Set₁ where
   field W         : Set
         R         : W → W → Set
         preorderR : preorder R
-        V         : W → string → Set
+        V         : W → nat → Set
         monoV     : ∀ {w w'} → R w w' → ∀ {s} → V w s → V w' s
   reflR : reflexive R
   reflR = fst preorderR
@@ -156,3 +157,28 @@ d = ImpliesI (ImpliesE (ImpliesI (weaken (weaken assume))) assume)
 
 e : [] ⊢ (p & q) ⇒ (p & q)
 e = ImpliesI assume
+
+-- Exercises
+--
+-- 10.1
+
+prf1 : [] ⊢ p & (q & r) ⇒ (p & q) & r
+prf1 = ImpliesI (AndI (AndI (AndE₁ assume) (AndE₁ (AndE₂ assume))) (AndE₂ (AndE₂ assume)))
+
+prf2 : [] ⊢ p & q ⇒ q & p
+prf2 = ImpliesI (AndI (AndE₂ assume) (AndE₁ assume))
+
+prf3 : [] ⊢ (p ⇒ q) ⇒ p ⇒ q
+prf3 = ImpliesI assume
+
+prf4 : [] ⊢ p ⇒ (p ⇒ q) ⇒ q
+prf4 = ImpliesI (ImpliesI (ImpliesE assume (weaken assume)))
+
+prf5 : [] ⊢ p ⇒ (p ⇒ q ⇒ r) ⇒ q ⇒ r
+prf5 = ImpliesI (ImpliesI (ImpliesE assume (weaken assume)))
+
+prf6 : [] ⊢ p ⇒ q ⇒ (p ⇒ q ⇒ r) ⇒ r
+prf6 = ImpliesI (ImpliesI (ImpliesI (ImpliesE (ImpliesE assume (weaken (weaken assume))) (weaken assume))))
+
+prf7 : [] ⊢ (p ⇒ q ⇒ r) ⇒ (p ⇒ q) ⇒ p ⇒ r
+prf7 = ImpliesI (ImpliesI (ImpliesI (ImpliesE (ImpliesE (weaken (weaken assume)) assume) (ImpliesE (weaken assume) assume))))
