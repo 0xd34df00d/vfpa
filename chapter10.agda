@@ -136,3 +136,23 @@ Universality₁ {f} {Γ} prf = SoundnessU (Completeness {f} {Γ} prf)
 
 Universality₂ : ∀ {f Γ} → U , Γ ⊨ f → Γ ⊩ f
 Universality₂ {f} {Γ} prf = Soundness (CompletenessU {f} {Γ} prf)
+
+nbe : ∀ {Γ f} → Γ ⊢ f → Γ ⊢ f
+nbe p = Completeness (Soundness p)
+
+-- It's also instructive to look at the normalized form of just Soundness applied to these examples
+
+a : [] ⊢ True
+a = AndE₁ (AndI TrueI TrueI)
+
+b : [] ⊢ True
+b = ImpliesE (ImpliesE (ImpliesI (ImpliesI assume)) TrueI) TrueI
+
+c : [] ⊢ p ⇒ p
+c = ImpliesI (ImpliesE (ImpliesI assume) assume)
+
+d : [ q ] ⊢ p ⇒ q
+d = ImpliesI (ImpliesE (ImpliesI (weaken (weaken assume))) assume)
+
+e : [] ⊢ (p & q) ⇒ (p & q)
+e = ImpliesI assume
